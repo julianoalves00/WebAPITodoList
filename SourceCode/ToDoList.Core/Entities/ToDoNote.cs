@@ -11,7 +11,8 @@ namespace ToDoList.Core.Entities
         public List<string> Items { get; set; }
 
         public ToDoNote() { }
-        public ToDoNote(string title, List<string> items)
+        public ToDoNote(int id = 0) : base(id) { }
+        public ToDoNote(string title, List<string> items = null)
         {
             Title = title;
             Items = items;

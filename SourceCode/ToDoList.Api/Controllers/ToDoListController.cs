@@ -39,7 +39,7 @@ namespace ToDoList.Api.Controllers
         [HttpGet("{id}")]
         public ToDoNoteDto GetById(int id)
         {
-            ToDoNote entity = _toDoNoteRepo.GetById(id);
+            ToDoNote entity = _toDoNoteRepo.GetById(new ToDoNote(id));
 
             return _mapper.Map<ToDoNote, ToDoNoteDto>(entity);
         }

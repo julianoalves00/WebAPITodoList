@@ -2,8 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using System.Xml.Serialization;
+using System.Linq;
 using ToDoList.Core.Entities;
 using ToDoList.Core.Interfaces;
 
@@ -37,20 +36,54 @@ namespace ToDoList.Core.Repository
 
         #endregion
 
+        #region Methods
+
         public T CreateNew<T>(T entity) where T : IBaseEntity
         {
             IBaseEntity created = null;
 
             entity.Id = ++JsonDB.ActualId;
-            entity.TimeStamp = DateTime.Now;
+            entity.Timestamp = DateTime.Now;
+            
+             Add<T>(entity);
 
-            if (entity is ToDoNote toDoNote)
-            {
-                JsonDB.AllToDo.Add(toDoNote);
-                created = toDoNote;
-            }
+            created = entity;
 
             return (T) created;
+        }
+
+        public bool Add<T>(T entity) where T : IBaseEntity
+        {
+            if (entity.Id == 0)
+                return false;
+
+            GetList<T>(entity).Add(entity);
+
+            return true;
+        }
+
+        public bool Remove<T>(T entity) where T : IBaseEntity
+        {
+            T toRemove = GetList<T>(entity).Cast<T>().FirstOrDefault(i => i.Id == entity.Id);
+
+            if (toRemove == null)
+                return false;
+
+            GetList<T>(entity).Remove(toRemove);
+
+            return true;
+        }
+
+        public System.Collections.IList GetList<T>(T entity) where T : IBaseEntity
+        {
+            return GetList<T>(entity.GetType());
+        }
+        public System.Collections.IList GetList<T>(Type type) where T : IBaseEntity
+        {
+            if (type == typeof(ToDoNote))
+                return JsonDB.ToDoNotes;
+
+            return new List<T>();
         }
 
         public void Save()
@@ -67,17 +100,19 @@ namespace ToDoList.Core.Repository
             if (JsonDB == null)
                 JsonDB = new JsonDB(new List<ToDoNote>(), 0);
         }
+
+        #endregion
     }
 
     internal class JsonDB
     {
-        public List<ToDoNote> AllToDo { get; private set; }
+        public List<ToDoNote> ToDoNotes { get; set; }
 
         public int ActualId { get; set; }
 
         public JsonDB(List<ToDoNote> allToDo, int actualId)
         {
-            AllToDo = allToDo;
+            ToDoNotes = allToDo;
             ActualId = actualId;
         }
     }
