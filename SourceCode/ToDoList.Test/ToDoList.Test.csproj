@@ -15,7 +15,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ToDoList.Dtos\ToDoList.Dtos.csproj" />
+    <Reference Include="ToDoList.Dtos">
+      <HintPath>..\Dlls\ToDoList.Dtos.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

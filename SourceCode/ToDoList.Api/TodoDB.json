@@ -7,28 +7,16 @@
         "Postman 1",
         "Postman 2"
       ],
-      "Id": 12,
-      "Timestamp": "2021-05-25T14:26:41.6467202+01:00"
+      "Id": 10,
+      "Timestamp": "2021-05-26T00:35:22.8600166+01:00"
     }
   ],
   "AppUsers": [
     {
       "Email": "postman@gmail.com",
       "DisplayName": "Postman user app",
-      "Id": 1,
-      "Timestamp": "2021-05-25T14:39:55.8786261+01:00"
-    },
-    {
-      "Email": "postman2@gmail.com",
-      "DisplayName": "Postman 2 user app",
-      "Id": 1,
-      "Timestamp": "2021-05-25T15:05:11.4410314+01:00"
-    },
-    {
-      "Email": "unittest@gmail.com",
-      "DisplayName": "[TEST_APP_USER] User test",
-      "Id": 1,
-      "Timestamp": "2021-05-25T15:10:20.8220054+01:00"
+      "Id": 12,
+      "Timestamp": "2021-05-26T00:35:18.9106376+01:00"
     }
   ]
 }

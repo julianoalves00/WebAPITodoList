@@ -18,8 +18,13 @@ namespace ToDoList.Core.Repository
 
         #region Properties
 
-        private static JsonDataBase _instance;
         public JsonDB JsonDB { get; set; }
+
+        #endregion
+
+        #region Singleton implementation
+
+        private static JsonDataBase _instance;
 
         public static JsonDataBase Instance
         {
@@ -34,6 +39,8 @@ namespace ToDoList.Core.Repository
             }
         }
 
+        private JsonDataBase() { }
+
         #endregion
 
         #region Methods
@@ -43,7 +50,6 @@ namespace ToDoList.Core.Repository
             IBaseEntity created = null;
 
             entity.Id = JsonDB.GetActualId(entity.GetType().Name);
-            entity.Timestamp = DateTime.Now;
             
              Add<T>(entity);
 
@@ -78,6 +84,7 @@ namespace ToDoList.Core.Repository
         {
             return GetList<T>(entity.GetType());
         }
+
         public System.Collections.IList GetList<T>(Type type) where T : IBaseEntity
         {
             if (type == typeof(ToDoNote))
@@ -118,6 +125,7 @@ namespace ToDoList.Core.Repository
         {
             ToDoNotes = new List<ToDoNote>();
             AppUsers = new List<AppUser>();
+
             ActualId = new Dictionary<string, int>();
             ActualId.Add(typeof(ToDoNote).Name, 0);
             ActualId.Add(typeof(AppUser).Name, 0);
@@ -125,12 +133,10 @@ namespace ToDoList.Core.Repository
 
         public int GetActualId(string typeName)
         {
-            int actualId = 0;
-            
             if (ActualId.ContainsKey(typeName))
-                actualId = ++ActualId[typeName];
+                return ++ActualId[typeName];
 
-            return actualId;
+            return 0;
         }
     }
 }

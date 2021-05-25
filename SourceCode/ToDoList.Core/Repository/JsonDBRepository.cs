@@ -1,11 +1,6 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Xml.Serialization;
 using ToDoList.Core.Entities;
 using ToDoList.Core.Interfaces;
 
@@ -18,14 +13,6 @@ namespace ToDoList.Core.Repository
     /// <seealso cref="ToDoList.Core.Interfaces.IGenericRepository{T}" />
     public class JsonDBRepository<T> : IGenericRepository<T> where T : BaseEntity
     {
-        #region Constructor
-
-        public JsonDBRepository()
-        {
-        }
-
-        #endregion
-
         #region Implementation of IGenericRepository
 
         public T GetById(T entity) 

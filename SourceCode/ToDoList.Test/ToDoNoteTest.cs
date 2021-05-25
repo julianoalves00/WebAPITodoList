@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
 using ToDoList.Dtos.Entities;
 using Xunit;
@@ -13,21 +12,48 @@ namespace ToDoList.Test
     {
         private const string BASE_ADDRESS = "https://localhost:5001/";
         private const string TEST_TITLE = "[TEST_TITLE] ";
+        private const string EMAIL_APP_USER_TEST = "appusertodounittest";
+
+        public ToDoNoteTest()
+        {
+            // Verificar se appuser testunit exists
+            AppUserDto appUserTest = new AppUserDto() { Email = $"{EMAIL_APP_USER_TEST}@gmail.com", DisplayName = "app user testunit" };
+            AppUserDto appUserSearch = null;
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new System.Uri(BASE_ADDRESS);
+
+                HttpResponseMessage response = Task.Run(async () => await client.GetAsync($"appuser/{appUserTest.Email}")).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    appUserSearch = Task.Run(async () => await response.Content.ReadAsAsync<AppUserDto>()).Result;
+                }
+            }
+
+            if(appUserSearch == null)
+            {
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new System.Uri(BASE_ADDRESS);
+
+                    HttpResponseMessage response = Task.Run(async () => await client.PostAsJsonAsync("appuser", appUserTest)).Result;
+                }
+            }
+        }
 
         [Fact]
         public void GetById_ToDoNode()
         {
             // Arrange
             ToDoNoteDto toDoNote1 = CreateTodoNote(new ToDoNoteDto() { Title = "GetById Test1", Items = new List<string> { "Note 1 Test 1", "Note 2 Test 1" } }); 
-            ToDoNoteDto toDoNote2 = CreateTodoNote(new ToDoNoteDto() { Title = "GetById Test2", Items = new List<string> { "Note 1 Test 2", "Note 2 Test 2" } });
 
             // Act
             ToDoNoteDto respeonse1 = GetTodoNoteById(toDoNote1.Id);
-            ToDoNoteDto respeonse2 = GetTodoNoteById(toDoNote2.Id);
 
             // Assert
             Assert.True(respeonse1 != null && respeonse1.Id == toDoNote1.Id);
-            Assert.True(respeonse2 != null && respeonse2.Id == toDoNote2.Id);
         }
 
         [Fact]
@@ -69,6 +95,56 @@ namespace ToDoList.Test
         }
 
         [Fact]
+        public void Create_ToDoNode_Madatory_Fields()
+        {
+            // Arrange
+            ToDoNoteDto toDoNoteWithoutTitle = new ToDoNoteDto() { Email = $"{EMAIL_APP_USER_TEST}@gmail.com", Items = new List<string> { "Note 1", "Note 2" } };
+            ToDoNoteDto toDoNoteWithoutEmail = new ToDoNoteDto() { Title = "Todo Note Test", Items = new List<string> { "Note 1", "Note 2" } };
+
+            HttpResponseMessage responseWithoutTitle = null; 
+            HttpResponseMessage responseWithoutEmail = null;
+
+            // Act
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new System.Uri(BASE_ADDRESS);
+
+                responseWithoutTitle = Task.Run(async () => await client.PostAsJsonAsync("todolist", toDoNoteWithoutTitle)).Result;
+            }
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new System.Uri(BASE_ADDRESS);
+
+                responseWithoutEmail = Task.Run(async () => await client.PostAsJsonAsync("todolist", toDoNoteWithoutEmail)).Result;
+            }
+
+            // Assert
+            Assert.False(responseWithoutTitle.IsSuccessStatusCode);
+            Assert.False(responseWithoutEmail.IsSuccessStatusCode);
+        }
+
+        [Fact]
+        public void Create_ToDoNode_AppUser_Not_Exists()
+        {
+            // Arrange
+            ToDoNoteDto toDoNote = new ToDoNoteDto() { Email = "appuser_not_exists@mailnotexists.com", Items = new List<string> { "Note 1", "Note 2" } };
+
+            HttpResponseMessage response = null;
+
+            // Act
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new System.Uri(BASE_ADDRESS);
+
+                response = Task.Run(async () => await client.PostAsJsonAsync("todolist", toDoNote)).Result;
+            }
+
+            // Assert
+            Assert.False(response.IsSuccessStatusCode);
+        }
+
+        [Fact]
         public void Update_ToDoNode()
         {
             // Arrange
@@ -96,6 +172,41 @@ namespace ToDoList.Test
         }
 
         [Fact]
+        public void Update_ToDoNode_Madatory_Fields()
+        {
+            // Arrange
+            ToDoNoteDto toDoNoteWithoutTitle = CreateTodoNote(new ToDoNoteDto() { Title = "Update WithoutTitle", Items = new List<string> { "Note 1", "Note 2" } });
+            toDoNoteWithoutTitle = GetTodoNoteById(toDoNoteWithoutTitle.Id);
+            toDoNoteWithoutTitle.Title = null;
+
+            ToDoNoteDto toDoNoteWithoutEmail = CreateTodoNote(new ToDoNoteDto() { Title = "Update WithoutTitle", Items = new List<string> { "Note 1", "Note 2" } });
+            toDoNoteWithoutEmail = GetTodoNoteById(toDoNoteWithoutEmail.Id);
+            toDoNoteWithoutEmail.Email = null;
+
+            HttpResponseMessage responseWithoutTitle = null;
+            HttpResponseMessage responseWithoutEmail = null;
+
+            // Act
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new System.Uri(BASE_ADDRESS);
+
+                responseWithoutTitle = Task.Run(async () => await client.PutAsJsonAsync("todolist", toDoNoteWithoutTitle)).Result;
+            }
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new System.Uri(BASE_ADDRESS);
+
+                responseWithoutEmail = Task.Run(async () => await client.PutAsJsonAsync("todolist", toDoNoteWithoutEmail)).Result;
+            }
+
+            // Assert
+            Assert.False(responseWithoutTitle.IsSuccessStatusCode);
+            Assert.False(responseWithoutEmail.IsSuccessStatusCode);
+        }
+
+        [Fact]
         public void Delete_ToDoNode()
         {
             // Arrange
@@ -118,7 +229,7 @@ namespace ToDoList.Test
             ToDoNoteDto itemCreated = null;
 
             if (string.IsNullOrEmpty(toDoNoteDto.Email))
-                toDoNoteDto.Email = "unittest@gmail.com";
+                toDoNoteDto.Email = $"{EMAIL_APP_USER_TEST}@gmail.com";
 
             if (!toDoNoteDto.Title.Contains(TEST_TITLE))
                 toDoNoteDto.Title = TEST_TITLE + toDoNoteDto.Title;
@@ -175,6 +286,8 @@ namespace ToDoList.Test
             return sucess;
         }
 
+
+
         public void Dispose()
         {
             using (var client = new HttpClient())
@@ -195,6 +308,15 @@ namespace ToDoList.Test
                             RemoveTodoNote(itemRemove.Id);
                     }
                 }
+            }
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new System.Uri(BASE_ADDRESS);
+                
+                string email = $"{EMAIL_APP_USER_TEST}@gmail.com";
+
+                HttpResponseMessage response = Task.Run(async () => await client.DeleteAsync($"appuser?email={email}")).Result;
             }
         }
     }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ToDoList.Core.Entities
+﻿namespace ToDoList.Core.Entities
 {
     public class AppUser : BaseEntity
     {

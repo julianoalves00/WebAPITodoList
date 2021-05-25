@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace ToDoList.Dtos.Entities
 {
     public class AppUserDto
     {
+        [Required]
         public string Email { get; set; }
 
-        public string DisplayName { get; set; }
+        [Required]
+        public string DisplayName { get; set; } 
     }
 }
