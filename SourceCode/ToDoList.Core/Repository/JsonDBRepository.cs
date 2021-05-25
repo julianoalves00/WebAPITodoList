@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Xml.Serialization;
 using ToDoList.Core.Entities;
@@ -35,6 +36,13 @@ namespace ToDoList.Core.Repository
         public List<T> GetAll()
         {
             return new List<T>(JsonDataBase.Instance.GetList<T>(typeof(T)).Cast<T>());
+        }
+
+        public List<T> GetByFilter(Func<T, bool> filter)
+        {
+            List<T> allRepo =  new List<T>(JsonDataBase.Instance.GetList<T>(typeof(T)).Cast<T>());
+
+            return allRepo.Where(filter).ToList();
         }
 
         public T Create(T entity)

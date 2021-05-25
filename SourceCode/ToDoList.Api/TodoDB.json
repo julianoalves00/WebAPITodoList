@@ -1,106 +1,34 @@
 {
   "ToDoNotes": [
     {
-      "Title": "Todo Note Test",
-      "Items": [
-        "Note 1",
-        "Note 2"
-      ],
-      "Id": 2,
-      "Timestamp": "2021-05-25T01:05:30.76213+01:00"
-    },
-    {
-      "Title": "GetById Test1",
-      "Items": [
-        "Note 1 Test 1",
-        "Note 2 Test 1"
-      ],
-      "Id": 5,
-      "Timestamp": "2021-05-25T01:05:30.9211092+01:00"
-    },
-    {
-      "Title": "GetById Test2",
-      "Items": [
-        "Note 1 Test 2",
-        "Note 2 Test 2"
-      ],
-      "Id": 6,
-      "Timestamp": "2021-05-25T01:05:30.9269936+01:00"
-    },
-    {
+      "Email": "postman@gmail.com",
       "Title": "Todo Note Postman test",
       "Items": [
         "Postman 1",
         "Postman 2"
-      ],
-      "Id": 8,
-      "Timestamp": "2021-05-25T01:12:57.3412231+01:00"
-    },
-    {
-      "Title": "Todo Note Postman test",
-      "Items": [
-        "Postman 1",
-        "Postman 2"
-      ],
-      "Id": 9,
-      "Timestamp": "2021-05-25T01:15:13.310576+01:00"
-    },
-    {
-      "Title": "Todo Note Postman test",
-      "Items": [
-        "Postman 1",
-        "Postman 2"
-      ],
-      "Id": 10,
-      "Timestamp": "2021-05-25T01:37:18.3578705+01:00"
-    },
-    {
-      "Title": "Update Postman test",
-      "Items": [
-        "Update Postman 1",
-        "Update Postman 2",
-        "Update Postman 3"
-      ],
-      "Id": 1,
-      "Timestamp": "2021-05-25T01:41:01.9283457+01:00"
-    },
-    {
-      "Title": "Todo Note Test",
-      "Items": [
-        "Note 1",
-        "Note 2"
-      ],
-      "Id": 11,
-      "Timestamp": "2021-05-25T01:45:23.2738551+01:00"
-    },
-    {
-      "Title": "Update TestUpdated 1",
-      "Items": [
-        "Note 1",
-        "Note 2",
-        "Note 3"
       ],
       "Id": 12,
-      "Timestamp": "2021-05-25T01:45:23.3762835+01:00"
-    },
-    {
-      "Title": "GetById Test1",
-      "Items": [
-        "Note 1 Test 1",
-        "Note 2 Test 1"
-      ],
-      "Id": 14,
-      "Timestamp": "2021-05-25T01:45:23.4330687+01:00"
-    },
-    {
-      "Title": "GetById Test2",
-      "Items": [
-        "Note 1 Test 2",
-        "Note 2 Test 2"
-      ],
-      "Id": 15,
-      "Timestamp": "2021-05-25T01:45:23.4406261+01:00"
+      "Timestamp": "2021-05-25T14:26:41.6467202+01:00"
     }
   ],
-  "ActualId": 15
+  "AppUsers": [
+    {
+      "Email": "postman@gmail.com",
+      "DisplayName": "Postman user app",
+      "Id": 1,
+      "Timestamp": "2021-05-25T14:39:55.8786261+01:00"
+    },
+    {
+      "Email": "postman2@gmail.com",
+      "DisplayName": "Postman 2 user app",
+      "Id": 1,
+      "Timestamp": "2021-05-25T15:05:11.4410314+01:00"
+    },
+    {
+      "Email": "unittest@gmail.com",
+      "DisplayName": "[TEST_APP_USER] User test",
+      "Id": 1,
+      "Timestamp": "2021-05-25T15:10:20.8220054+01:00"
+    }
+  ]
 }

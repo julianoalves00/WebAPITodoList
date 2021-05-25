@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using ToDoList.Api.Dtos.Entities;
+using ToDoList.Dtos.Entities;
 using ToDoList.Core.Entities;
 
 namespace ToDoList.Api.Helpers
@@ -9,6 +9,7 @@ namespace ToDoList.Api.Helpers
         public MappingProfiles()
         {
             CreateMap<ToDoNote, ToDoNoteDto>().ReverseMap();
+            CreateMap<AppUser, AppUserDto>().ReverseMap();
         }
     }
 }

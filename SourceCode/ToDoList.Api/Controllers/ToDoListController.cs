@@ -5,8 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ToDoList.Api.Dtos;
-using ToDoList.Api.Dtos.Entities;
+using ToDoList.Dtos.Entities;
 using ToDoList.Core.Entities;
 using ToDoList.Core.Interfaces;
 using ToDoList.Core.Repository;
@@ -18,13 +17,11 @@ namespace ToDoList.Api.Controllers
     public class ToDoListController : ControllerBase
     {
         private readonly IGenericRepository<ToDoNote> _toDoNoteRepo;
-        private readonly ILogger<ToDoListController> _logger;
         private readonly IMapper _mapper;
 
-        public ToDoListController(IGenericRepository<ToDoNote> toDoNoteRepo, ILogger<ToDoListController> logger, IMapper mapper)
+        public ToDoListController(IGenericRepository<ToDoNote> toDoNoteRepo, IMapper mapper)
         {
             _toDoNoteRepo = toDoNoteRepo;
-            _logger = logger;
             _mapper = mapper;
         }
 
@@ -39,7 +36,7 @@ namespace ToDoList.Api.Controllers
         [HttpGet("{id}")]
         public ToDoNoteDto GetById(int id)
         {
-            ToDoNote entity = _toDoNoteRepo.GetById(new ToDoNote(id));
+            ToDoNote entity = _toDoNoteRepo.GetById(new ToDoNote() { Id = id });
 
             return _mapper.Map<ToDoNote, ToDoNoteDto>(entity);
         }

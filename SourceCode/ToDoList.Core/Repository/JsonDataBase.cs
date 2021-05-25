@@ -42,7 +42,7 @@ namespace ToDoList.Core.Repository
         {
             IBaseEntity created = null;
 
-            entity.Id = ++JsonDB.ActualId;
+            entity.Id = JsonDB.GetActualId(entity.GetType().Name);
             entity.Timestamp = DateTime.Now;
             
              Add<T>(entity);
@@ -83,6 +83,9 @@ namespace ToDoList.Core.Repository
             if (type == typeof(ToDoNote))
                 return JsonDB.ToDoNotes;
 
+            if (type == typeof(AppUser))
+                return JsonDB.AppUsers;
+
             return new List<T>();
         }
 
@@ -98,7 +101,7 @@ namespace ToDoList.Core.Repository
             JsonDB = JsonConvert.DeserializeObject<JsonDB>(json);
 
             if (JsonDB == null)
-                JsonDB = new JsonDB(new List<ToDoNote>(), 0);
+                JsonDB = new JsonDB();
         }
 
         #endregion
@@ -107,13 +110,27 @@ namespace ToDoList.Core.Repository
     internal class JsonDB
     {
         public List<ToDoNote> ToDoNotes { get; set; }
+        public List<AppUser> AppUsers { get; set; }
 
-        public int ActualId { get; set; }
+        private Dictionary<string, int> ActualId { get; set; }
 
-        public JsonDB(List<ToDoNote> allToDo, int actualId)
+        public JsonDB()
         {
-            ToDoNotes = allToDo;
-            ActualId = actualId;
+            ToDoNotes = new List<ToDoNote>();
+            AppUsers = new List<AppUser>();
+            ActualId = new Dictionary<string, int>();
+            ActualId.Add(typeof(ToDoNote).Name, 0);
+            ActualId.Add(typeof(AppUser).Name, 0);
+        }
+
+        public int GetActualId(string typeName)
+        {
+            int actualId = 0;
+            
+            if (ActualId.ContainsKey(typeName))
+                actualId = ++ActualId[typeName];
+
+            return actualId;
         }
     }
 }
