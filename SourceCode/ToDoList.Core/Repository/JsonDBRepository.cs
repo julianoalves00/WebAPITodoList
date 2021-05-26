@@ -11,7 +11,7 @@ namespace ToDoList.Core.Repository
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <seealso cref="ToDoList.Core.Interfaces.IGenericRepository{T}" />
-    public class JsonDBRepository<T> : IGenericRepository<T> where T : BaseEntity
+    public class JsonDBRepository<T> : IGenericRepository<T> where T : IBaseEntity
     {
         #region Implementation of IGenericRepository
 
@@ -36,7 +36,7 @@ namespace ToDoList.Core.Repository
 
         public T Create(T entity)
         {
-            T entityCreated = null;
+            T entityCreated = default(T);
 
             using (JsonDataBase jsonDataBase = JsonDataBase.InstanceSafe) 
             {
