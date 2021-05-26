@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using ToDoList.Dtos.Entities;
 using Xunit;
@@ -10,9 +11,15 @@ namespace ToDoList.Test
 {
     public class AppUserTest : IDisposable
     {
+        #region Constants
+
         private const string BASE_ADDRESS = "https://localhost:5001/";
         private const string TEST_DISPLAY_NAME = "[TEST_APP_USER] ";
         private const string EMAIL_APP_USER_TEST = "unittestappuser";
+
+        #endregion
+
+        #region Tests Methods
 
         [Fact]
         public void Create_AppUser()
@@ -81,6 +88,7 @@ namespace ToDoList.Test
                 client.BaseAddress = new System.Uri(BASE_ADDRESS);
 
                 responseWithoutEmail = Task.Run(async () => await client.PostAsJsonAsync("appuser", appUserWithoutEmail)).Result;
+                //Thread.Sleep(100);
             }
 
             using (var client = new HttpClient())
@@ -88,12 +96,44 @@ namespace ToDoList.Test
                 client.BaseAddress = new System.Uri(BASE_ADDRESS);
 
                 responseWithoutDisplayName = Task.Run(async () => await client.PostAsJsonAsync("appuser", appUserWithoutDisplayName)).Result;
+                //Thread.Sleep(100);
             }
 
             // Assert
             Assert.False(responseWithoutEmail.IsSuccessStatusCode);
             Assert.False(responseWithoutDisplayName.IsSuccessStatusCode);
         }
+
+        #endregion
+
+        #region IDisposable implementation
+
+        public void Dispose()
+        {
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new System.Uri(BASE_ADDRESS);
+
+                HttpResponseMessage response = Task.Run(async () => await client.GetAsync("appuser")).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    List<AppUserDto> listAppUser = Task.Run(async () => await response.Content.ReadAsAsync<List<AppUserDto>>()).Result;
+
+                    if (listAppUser != null)
+                    {
+                        var listToRemove = listAppUser.Where(i => i != null && i.Email.Contains(EMAIL_APP_USER_TEST));
+
+                        foreach (AppUserDto itemRemove in listToRemove)
+                            RemoveAppUser(itemRemove.Email);
+                    }
+                }
+            }
+        }
+
+        #endregion
+
+        #region Private Methods
 
         private AppUserDto CreateAppUser(AppUserDto appUserDto)
         {
@@ -110,6 +150,7 @@ namespace ToDoList.Test
                 client.BaseAddress = new System.Uri(BASE_ADDRESS);
 
                 HttpResponseMessage response = Task.Run(async () => await client.PostAsJsonAsync("appuser", appUserDto)).Result;
+                //Thread.Sleep(100);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -121,8 +162,6 @@ namespace ToDoList.Test
 
             return itemCreated;
         }
-
-        
 
         private AppUserDto GetAppUserByEmail(string email)
         {
@@ -159,27 +198,6 @@ namespace ToDoList.Test
             return sucess;
         }
 
-        public void Dispose() 
-        {
-            using (var client = new HttpClient())
-            {
-                client.BaseAddress = new System.Uri(BASE_ADDRESS);
-
-                HttpResponseMessage response = Task.Run(async () => await client.GetAsync("appuser")).Result;
-
-                if (response.IsSuccessStatusCode)
-                {
-                    List<AppUserDto> listAppUser = Task.Run(async () => await response.Content.ReadAsAsync<List<AppUserDto>>()).Result;
-
-                    if (listAppUser != null)
-                    {
-                        var listToRemove = listAppUser.Where(i => i != null && i.Email.Contains(EMAIL_APP_USER_TEST));
-
-                        foreach (AppUserDto itemRemove in listToRemove)
-                            RemoveAppUser(itemRemove.Email);
-                    }
-                }
-            }
-        }
+        #endregion
     }
 }

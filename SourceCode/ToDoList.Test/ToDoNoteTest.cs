@@ -10,38 +10,25 @@ namespace ToDoList.Test
 {
     public class ToDoNoteTest : IDisposable
     {
+        #region Constants
+
         private const string BASE_ADDRESS = "https://localhost:5001/";
         private const string TEST_TITLE = "[TEST_TITLE] ";
         private const string EMAIL_APP_USER_TEST = "appusertodounittest";
 
+        #endregion
+
+        #region Constructor
+
         public ToDoNoteTest()
         {
-            // Verificar se appuser testunit exists
-            AppUserDto appUserTest = new AppUserDto() { Email = $"{EMAIL_APP_USER_TEST}@gmail.com", DisplayName = "app user testunit" };
-            AppUserDto appUserSearch = null;
-
-            using (var client = new HttpClient())
-            {
-                client.BaseAddress = new System.Uri(BASE_ADDRESS);
-
-                HttpResponseMessage response = Task.Run(async () => await client.GetAsync($"appuser/{appUserTest.Email}")).Result;
-
-                if (response.IsSuccessStatusCode)
-                {
-                    appUserSearch = Task.Run(async () => await response.Content.ReadAsAsync<AppUserDto>()).Result;
-                }
-            }
-
-            if(appUserSearch == null)
-            {
-                using (var client = new HttpClient())
-                {
-                    client.BaseAddress = new System.Uri(BASE_ADDRESS);
-
-                    HttpResponseMessage response = Task.Run(async () => await client.PostAsJsonAsync("appuser", appUserTest)).Result;
-                }
-            }
+            CreateAppUserTest(EMAIL_APP_USER_TEST);
+            CreateAppUserTest(EMAIL_APP_USER_TEST + "2");
         }
+
+        #endregion
+
+        #region Tests Methods
 
         [Fact]
         public void GetById_ToDoNode()
@@ -79,6 +66,34 @@ namespace ToDoList.Test
 
             // Assert
             Assert.True(listTodo != null && listTodo.Count > 0);
+        }
+
+        [Fact]
+        public void GetByEmail_ToDoNode()
+        {
+            // Arrange
+            string email2 = $"{EMAIL_APP_USER_TEST}2@gmail.com";
+            ToDoNoteDto toDoNote1 = CreateTodoNote(new ToDoNoteDto() { Email = email2, Title = "GetByEmail email 2", Items = new List<string> { "Note 1 Test 1", "Note 2 Test 1" } });
+            ToDoNoteDto toDoNote = CreateTodoNote(new ToDoNoteDto() { Email = email2, Title = "GetByEmail 2 email 1", Items = new List<string> { "Note 1 Test 1", "Note 2 Test 1" } });
+            ToDoNoteDto toDoNote3 = CreateTodoNote(new ToDoNoteDto() { Title = "GetByEmail 3 email 2", Items = new List<string> { "Note 1 Test 1", "Note 2 Test 1" } });
+            
+            List<ToDoNoteDto> listTodo = null;
+
+            // Act
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new System.Uri(BASE_ADDRESS);
+
+                HttpResponseMessage response = Task.Run(async () => await client.GetAsync($"todolist?email={email2}")).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    listTodo = Task.Run(async () => await response.Content.ReadAsAsync<List<ToDoNoteDto>>()).Result;
+                }
+            }
+
+            // Assert
+            Assert.True(listTodo != null && listTodo.Count == 2);
         }
 
         [Fact]
@@ -224,6 +239,55 @@ namespace ToDoList.Test
             Assert.True(toDoNoteAfterDelete == null);
         }
 
+        #endregion
+
+        #region IDisposable implementation
+
+        public void Dispose()
+        {
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new System.Uri(BASE_ADDRESS);
+
+                HttpResponseMessage response = Task.Run(async () => await client.GetAsync("todolist")).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    List<ToDoNoteDto> listTodo = Task.Run(async () => await response.Content.ReadAsAsync<List<ToDoNoteDto>>()).Result;
+
+                    if (listTodo != null)
+                    {
+                        var listToRemove = listTodo.Where(i => i != null && i.Title.Contains(TEST_TITLE));
+
+                        foreach (ToDoNoteDto itemRemove in listToRemove)
+                            RemoveTodoNote(itemRemove.Id);
+                    }
+                }
+            }
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new System.Uri(BASE_ADDRESS);
+
+                string email = $"{EMAIL_APP_USER_TEST}@gmail.com";
+
+                HttpResponseMessage response = Task.Run(async () => await client.DeleteAsync($"appuser?email={email}")).Result;
+            }
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new System.Uri(BASE_ADDRESS);
+
+                string email = $"{EMAIL_APP_USER_TEST}2@gmail.com";
+
+                HttpResponseMessage response = Task.Run(async () => await client.DeleteAsync($"appuser?email={email}")).Result;
+            }
+        }
+
+        #endregion
+
+        #region Private Methods
+
         private ToDoNoteDto CreateTodoNote(ToDoNoteDto toDoNoteDto)
         {
             ToDoNoteDto itemCreated = null;
@@ -286,38 +350,35 @@ namespace ToDoList.Test
             return sucess;
         }
 
-
-
-        public void Dispose()
+        private void CreateAppUserTest(string emailName)
         {
+            // Verificar se appuser testunit exists
+            AppUserDto appUserTest = new AppUserDto() { Email = $"{emailName}@gmail.com", DisplayName = $"{emailName} testunit" };
+            AppUserDto appUserSearch = null;
+
             using (var client = new HttpClient())
             {
                 client.BaseAddress = new System.Uri(BASE_ADDRESS);
 
-                HttpResponseMessage response = Task.Run(async () => await client.GetAsync("todolist")).Result;
+                HttpResponseMessage response = Task.Run(async () => await client.GetAsync($"appuser/{appUserTest.Email}")).Result;
 
                 if (response.IsSuccessStatusCode)
                 {
-                    List<ToDoNoteDto> listTodo = Task.Run(async () => await response.Content.ReadAsAsync<List<ToDoNoteDto>>()).Result;
-
-                    if (listTodo != null)
-                    {
-                        var listToRemove = listTodo.Where(i => i != null && i.Title.Contains(TEST_TITLE));
-
-                        foreach (ToDoNoteDto itemRemove in listToRemove)
-                            RemoveTodoNote(itemRemove.Id);
-                    }
+                    appUserSearch = Task.Run(async () => await response.Content.ReadAsAsync<AppUserDto>()).Result;
                 }
             }
 
-            using (var client = new HttpClient())
+            if (appUserSearch == null)
             {
-                client.BaseAddress = new System.Uri(BASE_ADDRESS);
-                
-                string email = $"{EMAIL_APP_USER_TEST}@gmail.com";
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new System.Uri(BASE_ADDRESS);
 
-                HttpResponseMessage response = Task.Run(async () => await client.DeleteAsync($"appuser?email={email}")).Result;
+                    HttpResponseMessage response = Task.Run(async () => await client.PostAsJsonAsync("appuser", appUserTest)).Result;
+                }
             }
         }
+
+        #endregion
     }
 }

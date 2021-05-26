@@ -7,8 +7,8 @@ namespace ToDoList.Core.Interfaces
     {
         T Create(T entity);
         T GetById(T entity);
-        List<T> GetAll();
-        List<T> GetByFilter(Func<T, bool> filter);
+        List<T> Get();
+        List<T> Get(Func<T, bool> filter);
         void Update(T entity);
         void Delete(T entity);
         

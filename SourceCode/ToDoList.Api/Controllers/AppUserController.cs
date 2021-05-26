@@ -24,14 +24,14 @@ namespace ToDoList.Api.Controllers
         [HttpGet]
         public IEnumerable<AppUserDto> Get()
         {
-            List<AppUser> list = _appUserRepo.GetAll();
+            List<AppUser> list = _appUserRepo.Get();
 
             return _mapper.Map<List<AppUser>, List<AppUserDto>>(list);
         }
         [HttpGet("{email}")]
         public AppUserDto GetByEmail(string email)
         {
-            List<AppUser> users = _appUserRepo.GetByFilter(f => f.Email == email);
+            List<AppUser> users = _appUserRepo.Get(f => f.Email == email);
 
             if (users == null || users.Count != 1)
             {
@@ -44,7 +44,7 @@ namespace ToDoList.Api.Controllers
         [HttpPost]
         public ActionResult<AppUserDto> Create(AppUserDto entity)
         {
-            List<AppUser> users = _appUserRepo.GetByFilter(f => f.Email == entity.Email);
+            List<AppUser> users = _appUserRepo.Get(f => f.Email == entity.Email);
 
             if (users != null && users.Count != 0)
                 return BadRequest($"App user '{entity.Email}' already exists.");
@@ -62,7 +62,7 @@ namespace ToDoList.Api.Controllers
         [HttpDelete]
         public void Delete(string email)
         {
-            List<AppUser> users = _appUserRepo.GetByFilter(f => f.Email == email);
+            List<AppUser> users = _appUserRepo.Get(f => f.Email == email);
 
             if (users == null || users.Count != 1)
                 BadRequest($"App user '{email}' not exists.");

@@ -23,9 +23,14 @@ namespace ToDoList.Api.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<ToDoNoteDto> GetAll()
+        public IEnumerable<ToDoNoteDto> GetAll(string email)
         {
-            List<ToDoNote> list = _toDoNoteRepo.GetAll();
+            List<ToDoNote> list = null;
+
+            if (string.IsNullOrEmpty(email))
+                list = _toDoNoteRepo.Get();
+            else
+                list = _toDoNoteRepo.Get(e => e.Email == email);
 
             return _mapper.Map<List<ToDoNote>, List<ToDoNoteDto>>(list);
         }
@@ -44,7 +49,7 @@ namespace ToDoList.Api.Controllers
             if(!ModelState.IsValid)
                 return BadRequest("One or more required fields not found.");
 
-            List<AppUser> users = _appUserRepo.GetByFilter(f => f.Email == entity.Email);
+            List<AppUser> users = _appUserRepo.Get(f => f.Email == entity.Email);
 
             if(users == null || users.Count != 1)
                 return BadRequest("App user not exists.");

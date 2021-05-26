@@ -20,43 +20,53 @@ namespace ToDoList.Core.Repository
             return JsonDataBase.Instance.GetList<T>(entity).Cast<T>().Where(i => i.Id == entity.Id).Cast<T>().FirstOrDefault();
         }
 
-        public List<T> GetAll()
+        public List<T> Get()
         {
             return new List<T>(JsonDataBase.Instance.GetList<T>(typeof(T)).Cast<T>());
         }
 
-        public List<T> GetByFilter(Func<T, bool> filter)
+        public List<T> Get(Func<T, bool> filter)
         {
             List<T> allRepo =  new List<T>(JsonDataBase.Instance.GetList<T>(typeof(T)).Cast<T>());
+
+            allRepo = allRepo.Where(n => n != null).ToList();
 
             return allRepo.Where(filter).ToList();
         }
 
         public T Create(T entity)
         {
-            T entityCreated = JsonDataBase.Instance.CreateNew(entity);
+            T entityCreated = null;
 
-            JsonDataBase.Instance.Save();
+            using (JsonDataBase jsonDataBase = JsonDataBase.InstanceSafe) 
+            {
+                entityCreated = jsonDataBase.CreateNew(entity);
+            }
 
             return entityCreated;
         }
 
         public void Update(T entity)
         {
-            IBaseEntity baseEntity = JsonDataBase.Instance.GetList<T>(entity).Cast<T>().FirstOrDefault(i => i.Id == entity.Id);
+            using (JsonDataBase jsonDataBase = JsonDataBase.InstanceSafe)
+            {
+                IBaseEntity baseEntity = jsonDataBase.GetList<T>(entity).Cast<T>().FirstOrDefault(i => i.Id == entity.Id);
 
-            JsonDataBase.Instance.Remove(baseEntity);
+                if (baseEntity == null)
+                    throw new Exception("Erro in update, entity not exist.");
 
-            JsonDataBase.Instance.Add<T>(entity);
+                jsonDataBase.Remove(baseEntity);
 
-            JsonDataBase.Instance.Save();
+                jsonDataBase.Add<T>(entity);
+            }
         }
 
         public void Delete(T entity)
         {
-            JsonDataBase.Instance.Remove(entity);
-
-            JsonDataBase.Instance.Save();
+            using (JsonDataBase jsonDataBase = JsonDataBase.InstanceSafe)
+            {
+                jsonDataBase.Remove(entity);
+            }
         }
 
         #endregion
