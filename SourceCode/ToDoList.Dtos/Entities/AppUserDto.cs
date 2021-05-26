@@ -2,6 +2,9 @@
 
 namespace ToDoList.Dtos.Entities
 {
+    /// <summary>
+    /// App user DTO entity
+    /// </summary>
     public class AppUserDto
     {
         [Required]

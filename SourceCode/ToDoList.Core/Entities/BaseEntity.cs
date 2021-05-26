@@ -3,6 +3,10 @@ using ToDoList.Core.Interfaces;
 
 namespace ToDoList.Core.Entities
 {
+    /// <summary>
+    /// Basic entity
+    /// </summary>
+    /// <seealso cref="ToDoList.Core.Interfaces.IBaseEntity" />
     public class BaseEntity : IBaseEntity
     {
         public int Id { get; set; }

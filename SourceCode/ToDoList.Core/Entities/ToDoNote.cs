@@ -2,6 +2,10 @@
 
 namespace ToDoList.Core.Entities
 {
+    /// <summary>
+    /// To do note entity
+    /// </summary>
+    /// <seealso cref="ToDoList.Core.Entities.BaseEntity" />
     public class ToDoNote : BaseEntity
     {
         public string Email { get; set; }

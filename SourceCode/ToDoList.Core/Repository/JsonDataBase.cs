@@ -9,6 +9,10 @@ using ToDoList.Core.Interfaces;
 
 namespace ToDoList.Core.Repository
 {
+    /// <summary>
+    /// Provides connection to the 'JSON database'
+    /// </summary>
+    /// <seealso cref="System.IDisposable" />
     internal class JsonDataBase : IDisposable
     {
         #region Constants
@@ -45,6 +49,8 @@ namespace ToDoList.Core.Repository
         #endregion
 
         #region Instance thread safe
+        
+        private static bool lockFlag = false;
 
         public static JsonDataBase InstanceSafe
         {
@@ -53,8 +59,6 @@ namespace ToDoList.Core.Repository
                 return GetInstanceAndLock();
             }
         }
-
-        private static bool lockFlag = false;
 
         private static JsonDataBase GetInstanceAndLock(int count = 0)
         {
@@ -170,9 +174,7 @@ namespace ToDoList.Core.Repository
     internal class JsonDataBaseFileModel
     {
         public List<ToDoNote> ToDoNotes { get; set; }
-        
         public List<AppUser> AppUsers { get; set; }
-        
         public Dictionary<string, int> ActualIds { get; set; }
 
         public JsonDataBaseFileModel()

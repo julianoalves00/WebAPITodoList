@@ -3,6 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ToDoList.Dtos.Entities
 {
+    /// <summary>
+    /// To do note DTO entity
+    /// </summary>
     public class ToDoNoteDto
     {
         public int Id { get; set; }
