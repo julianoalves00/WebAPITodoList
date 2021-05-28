@@ -2,37 +2,25 @@
   "ToDoNotes": [
     {
       "Email": "postman@gmail.com",
-      "Title": "Todo Note Postman test",
+      "Title": "Todo Note Postman test YY",
       "Items": [
         "Postman 1",
         "Postman 2"
       ],
-      "Id": 2,
-      "Timestamp": "2021-05-28T14:05:42.2350422+01:00"
+      "Id": 1,
+      "Timestamp": "2021-05-29T00:42:49.4152447+01:00"
     }
   ],
   "AppUsers": [
     {
-      "Email": "postman2@gmail.com",
-      "DisplayName": "Postman user app",
-      "Id": 1,
-      "Timestamp": "2021-05-28T14:05:04.4620761+01:00"
-    },
-    {
       "Email": "postman@gmail.com",
       "DisplayName": "Postman user app",
-      "Id": 2,
-      "Timestamp": "2021-05-28T14:05:34.3539152+01:00"
-    },
-    {
-      "Email": "unittestappuser165339677@gmail.com",
-      "DisplayName": "[TEST_APP_USER] GetAll_AppUser Test1",
-      "Id": 27,
-      "Timestamp": "2021-05-28T16:53:39.6812259+01:00"
+      "Id": 1,
+      "Timestamp": "2021-05-29T00:42:45.285682+01:00"
     }
   ],
   "ActualIds": {
-    "ToDoNote": 22,
+    "ToDoNote": 21,
     "AppUser": 43
   }
 }

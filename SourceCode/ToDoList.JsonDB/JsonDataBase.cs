@@ -7,7 +7,7 @@ using System.Threading;
 using ToDoList.Core.Entities;
 using ToDoList.Core.Interfaces;
 
-namespace ToDoList.JsonDB.Repository
+namespace ToDoList.JsonDB
 {
     /// <summary>
     /// Provides connection to the 'JSON database'
@@ -15,13 +15,9 @@ namespace ToDoList.JsonDB.Repository
     /// <seealso cref="System.IDisposable" />
     internal class JsonDataBase : IDisposable
     {
-        #region Constants
-
-        private const string JSON_DB_FILE = "Database\\TodoDB.json";
-
-        #endregion
-
         #region Properties
+        
+        private string _jsonFilePath;
 
         public JsonDataBaseFileModel JsonDB { get; set; }
 
@@ -31,20 +27,29 @@ namespace ToDoList.JsonDB.Repository
 
         private static JsonDataBase _instance;
 
-        public static JsonDataBase Instance
+        public static JsonDataBase Instance(string jsonFilePath, bool lockInstance = false)
         {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = new JsonDataBase();
-                    _instance.LoadJsonDBFromFile();
-                }
-                return _instance;
-            }
+            if (lockInstance)
+                return GetInstanceAndLock(jsonFilePath);
+            else
+                return GetInstance(jsonFilePath);
         }
 
-        private JsonDataBase() { }
+        private static JsonDataBase GetInstance(string jsonFilePath)
+        {
+            if (_instance == null)
+            {
+                _instance = new JsonDataBase(jsonFilePath);
+                _instance.LoadJsonDBFromFile();
+            }
+
+            return _instance;
+        }
+
+        private JsonDataBase(string jsonFilePath) 
+        {
+            _jsonFilePath = jsonFilePath;
+        }
 
         #endregion
 
@@ -52,15 +57,7 @@ namespace ToDoList.JsonDB.Repository
         
         private static bool lockFlag = false;
 
-        public static JsonDataBase InstanceSafe
-        {
-            get
-            {
-                return GetInstanceAndLock();
-            }
-        }
-
-        private static JsonDataBase GetInstanceAndLock(int count = 0)
+        private static JsonDataBase GetInstanceAndLock(string jsonFilePath, int count = 0)
         {
             object lockObj = new object();
 
@@ -69,14 +66,14 @@ namespace ToDoList.JsonDB.Repository
                 if (lockFlag && count < 10)
                 {
                     Thread.Sleep(100);
-                    return GetInstanceAndLock(++count);
+                    return GetInstanceAndLock(jsonFilePath, ++count);
                 }
                 
                 // Lock to another thread not try write in json file in the same time
                 lockFlag = true;
             }
 
-            return Instance;
+            return GetInstance(jsonFilePath);
         }
 
         #endregion
@@ -148,14 +145,14 @@ namespace ToDoList.JsonDB.Repository
             JsonDB.ToDoNotes = JsonDB.ToDoNotes.Where(n => n != null).ToList();
 
             string json = JsonConvert.SerializeObject(JsonDB, Newtonsoft.Json.Formatting.Indented);
-            File.WriteAllText(JSON_DB_FILE, json);
+            File.WriteAllText(_jsonFilePath, json);
 
             
         }
 
         private void LoadJsonDBFromFile()
         {
-            string json = File.ReadAllText(JSON_DB_FILE);
+            string json = File.ReadAllText(_jsonFilePath);
             JsonDB = JsonConvert.DeserializeObject<JsonDataBaseFileModel>(json);
 
             if (JsonDB == null)

@@ -10,6 +10,8 @@ using ToDoList.LiteDB.Interfaces;
 using ToDoList.LiteDB.Repository;
 using Microsoft.Extensions.Options;
 using ToDoList.JsonDB.Repository;
+using ToDoList.JsonDB.Interfaces;
+using ToDoList.JsonDB;
 
 namespace ToDoList.Api
 {
@@ -30,13 +32,14 @@ namespace ToDoList.Api
 
             if (Configuration.GetValue<string>("UseDB") == "LiteDB")
             {
-                services.AddSingleton<ILiteDbContext>(l => 
-                    new LiteDbContext(Options.Create(new LiteDbOptions() { DatabaseLocation = Configuration["LiteDbOptions:DatabaseLocation"] })));
+                services.AddSingleton<ILiteDbContext>(l => new LiteDbContext(Options.Create(new LiteDbOptions() { DatabaseLocation = Configuration["LiteDbOptions:DatabaseLocation"] })));
 
                 services.AddScoped(typeof(IGenericRepository<>), typeof(GenericLiteDBRepository<>));
             }
             else
             {
+                services.AddSingleton<IJSonDBOptions>(l => new JSonDBOptions(Configuration["JsonFilePath"]));
+
                 services.AddScoped(typeof(IGenericRepository<>), typeof(GenericJsonDBRepository<>));
             }
         }
