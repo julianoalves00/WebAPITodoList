@@ -1,13 +1,14 @@
 # WebAPITodoList
 RESTful API for a TODO-list with the basic CRUD operations.
 
-Visual Studio 2019 was used to develop this, the solution is divided into six projects
+Visual Studio VS 2019 was used as a development tool.
+
+The solution is divided into six projects:
+	
 	- .Net Core Web API.
 		- Using a JSON file or LiteDB NoSQL as database.
-		- In appsettings.json configure UseDB param to select the database to use
-			- "UseDB" : "JsonFile"
-			or
-			- "UseDB" : "LiteDB"
+		
+		- In appsettings.json configure UseDB param to select the database to use, possibles values ("JsonFile" or "LiteDB")
 		
 	- Core class library
 		- Bussines entities and interfaces
