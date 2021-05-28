@@ -11,6 +11,8 @@
   <ItemGroup>
     <ProjectReference Include="..\ToDoList.Core\ToDoList.Core.csproj" />
     <ProjectReference Include="..\ToDoList.Dtos\ToDoList.Dtos.csproj" />
+    <ProjectReference Include="..\ToDoList.JsonDB\ToDoList.JsonDB.csproj" />
+    <ProjectReference Include="..\ToDoList.LiteDB\ToDoList.LiteDB.csproj" />
   </ItemGroup>
 
 

@@ -7,7 +7,7 @@ using System.Threading;
 using ToDoList.Core.Entities;
 using ToDoList.Core.Interfaces;
 
-namespace ToDoList.Core.Repository
+namespace ToDoList.JsonDB.Repository
 {
     /// <summary>
     /// Provides connection to the 'JSON database'
@@ -17,7 +17,7 @@ namespace ToDoList.Core.Repository
     {
         #region Constants
 
-        private const string JSON_DB_FILE = "TodoDB.json";
+        private const string JSON_DB_FILE = "Database\\TodoDB.json";
 
         #endregion
 

@@ -4,14 +4,14 @@ using System.Linq;
 using ToDoList.Core.Entities;
 using ToDoList.Core.Interfaces;
 
-namespace ToDoList.Core.Repository
+namespace ToDoList.JsonDB.Repository
 {
     /// <summary>
     /// Generic JsonDB Repository
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <seealso cref="ToDoList.Core.Interfaces.IGenericRepository{T}" />
-    public class JsonDBRepository<T> : IGenericRepository<T> where T : IBaseEntity
+    public class GenericJsonDBRepository<T> : IGenericRepository<T> where T : IBaseEntity
     {
         #region Implementation of IGenericRepository
 
@@ -46,8 +46,10 @@ namespace ToDoList.Core.Repository
             return entityCreated;
         }
 
-        public void Update(T entity)
+        public bool Update(T entity)
         {
+            bool sucess = false;
+
             using (JsonDataBase jsonDataBase = JsonDataBase.InstanceSafe)
             {
                 IBaseEntity baseEntity = jsonDataBase.GetList<T>(entity).Cast<T>().FirstOrDefault(i => i.Id == entity.Id);
@@ -55,18 +57,25 @@ namespace ToDoList.Core.Repository
                 if (baseEntity == null)
                     throw new Exception("Erro in update, entity not exist.");
 
-                jsonDataBase.Remove(baseEntity);
+                sucess = jsonDataBase.Remove(baseEntity);
 
-                jsonDataBase.Add<T>(entity);
+                if(sucess)
+                    sucess = jsonDataBase.Add<T>(entity);
             }
+
+            return sucess;
         }
 
-        public void Delete(T entity)
+        public bool Delete(T entity)
         {
+            bool sucess = false;
+
             using (JsonDataBase jsonDataBase = JsonDataBase.InstanceSafe)
             {
-                jsonDataBase.Remove(entity);
+                sucess = jsonDataBase.Remove(entity);
             }
+
+            return sucess;
         }
 
         #endregion
