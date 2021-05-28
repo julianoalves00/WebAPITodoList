@@ -1,7 +1,7 @@
 # WebAPITodoList
 RESTful API for a TODO-list with the basic CRUD operations.
 
-Visual Studio VS 2019 was used as a development tool.
+Visual Studio 2019 was used as a development tool.
 
 The solution is divided into six projects:
 	
